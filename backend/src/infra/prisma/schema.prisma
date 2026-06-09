@@ -11,3 +11,97 @@ datasource db {
   provider = "postgresql"
 }
 
+enum UserStatus{
+  ATIVO
+  INATIVO
+  BLOQUEADO
+  PENDENTE
+}
+
+enum CampaignStatus{
+  ATIVA
+  INATIVA
+  BLOQUEADA
+}
+
+enum PaymentMethodStatus{
+  ATIVO
+  INATIVO
+}
+
+enum CampaignOptionStatus{
+  GANHA
+  PERDIDA
+  PENDENTE
+}
+
+enum UserType{
+  ADMIN
+  OPERATOR
+} 
+
+model User{
+  id                Int               @id @default(autoincrement())
+  name              String
+  email             String            @unique
+  cpf               String            @unique
+  passwordHash      String        
+  tel               String 
+  status            UserStatus        @default(ATIVO)
+  user_type         UserType          @default(OPERATOR)
+  
+  orders            Order[]
+}
+
+model Order{
+  id                       Int                  @id @default(autoincrement())
+  dt_create                DateTime             @default(now())
+  comprovante              String
+
+  user_id                  Int          
+  user                     User                 @relation(fields: [user_id], references: [id], onDelete: Cascade)    
+
+  campaign_option_id       Int 
+  campaign_option          CampaignOption       @relation(fields: [campaign_option_id], references: [id], onDelete: Cascade)
+
+  payment_method_id        Int
+  payment_method           PaymentMethod         @relation(fields: [payment_method_id], references: [id], onDelete: Cascade)
+}
+
+model PaymentMethod{
+  id          Int                     @id @default(autoincrement())
+  name        String
+  status      PaymentMethodStatus     @default(ATIVO)
+
+
+  orders  Order[]
+
+}
+
+model CampaignOption {
+  id                  Int                     @id @default(autoincrement())
+  name                String
+  status              CampaignOptionStatus    @default(PENDENTE)
+
+
+
+  campaign_id         Int
+  campaign            Campaign          @relation(fields: [campaign_id], references: [id], onDelete: Cascade)
+
+  orders              Order[]
+}
+
+model Campaign{
+  id                  Int               @id @default(autoincrement())
+  code                Int               @unique
+  name                String
+  dt_start            DateTime          @default(now())
+  dt_end              DateTime
+  fee_operational     Decimal           @db.Decimal(5,2)
+  campaign_value      Decimal           @db.Decimal(10,2)
+  status              CampaignStatus    @default(ATIVA)
+  is_public            Boolean          @default(true)
+
+
+  campaign_options    CampaignOption[]
+}
