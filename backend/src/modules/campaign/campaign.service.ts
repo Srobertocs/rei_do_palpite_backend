@@ -20,7 +20,7 @@ export class CampaignService {
     return campaign;
   }
 
-  async createCampaign(data: CreateCampaignDto) {
+  async createCampaign(data: CreateCampaignDto, userId: number) {
     const campaign = await this.campaignRepository.searchCampaign({
       code: data.code,
     });
@@ -29,6 +29,11 @@ export class CampaignService {
       throw new ConflictException('Já existe uma campanha com este código');
     }
 
-    return await this.campaignRepository.create(data);
+    return await this.campaignRepository.create({
+      ...data,
+      user: {
+        connect: { id: userId },
+      },
+    });
   }
 }

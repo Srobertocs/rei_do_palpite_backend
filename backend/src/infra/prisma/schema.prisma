@@ -29,10 +29,14 @@ enum PaymentMethodStatus{
   INATIVO
 }
 
+enum TypePaymentMethod{
+  PIX
+  CARTAO_DEBITO
+}
+
 enum CampaignOptionStatus{
-  GANHA
-  PERDIDA
-  PENDENTE
+  ATIVA
+  INATIVA
 }
 
 enum UserType{
@@ -51,6 +55,8 @@ model User{
   user_type         UserType          @default(OPERATOR)
   
   orders            Order[]
+  campaigns         Campaign[]
+  payment_methods   PaymentMethod[]
 }
 
 model Order{
@@ -69,19 +75,21 @@ model Order{
 }
 
 model PaymentMethod{
-  id          Int                     @id @default(autoincrement())
-  name        String
-  status      PaymentMethodStatus     @default(ATIVO)
+  id              Int                       @id @default(autoincrement()) 
+  description     String   
+  type_method     TypePaymentMethod         @default(PIX)
+  status          PaymentMethodStatus       @default(ATIVO)
 
+  user_id         Int
+  user            User                       @relation(fields: [user_id], references: [id], onDelete: Cascade)           
 
   orders  Order[]
-
 }
 
 model CampaignOption {
   id                  Int                     @id @default(autoincrement())
   name                String
-  status              CampaignOptionStatus    @default(PENDENTE)
+  status              CampaignOptionStatus    @default(ATIVA)
 
 
 
@@ -100,7 +108,10 @@ model Campaign{
   fee_operational     Decimal           @db.Decimal(5,2)
   campaign_value      Decimal           @db.Decimal(10,2)
   status              CampaignStatus    @default(ATIVA)
-  is_public            Boolean          @default(true)
+  is_public           Boolean           @default(true)
+
+  user_id             Int
+  user                User              @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
 
   campaign_options    CampaignOption[]

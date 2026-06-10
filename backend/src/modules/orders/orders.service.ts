@@ -17,10 +17,6 @@ export class OrderService {
     private readonly paymentMethodService: PaymentMethodService,
   ) {}
 
-  async getAll() {
-    return await this.orderRepository.findAll();
-  }
-
   async getById(id: number, userId: number) {
     const order = await this.orderRepository.findOrder(id, userId);
 
@@ -34,7 +30,15 @@ export class OrderService {
   }
 
   async getByUserId(userId: number) {
-    return await this.orderRepository.findByUserId(userId);
+    const orders = await this.orderRepository.findByUserId(userId);
+
+    if (orders.length === 0) {
+      throw new NotFoundException(
+        'O usuário não possui pedidos cadastrados no momento',
+      );
+    }
+
+    return orders;
   }
 
   async create(data: CreateOrderDto, userId: number) {
@@ -78,12 +82,18 @@ export class OrderService {
       );
     }
 
-    return await this.orderRepository.update(id, {
+    const updateOrder = await this.orderRepository.update(id, {
       comprovante: data.comprovante,
       payment_method: {
         connect: { id: data.payment_method_id },
       },
     });
+
+    if (!updateOrder) {
+      throw new Error('Erro ao atualizar pedido');
+    }
+
+    return { message: 'Pedido atualizado com sucesso' };
   }
 
   async delete(id: number, userId: number) {
@@ -95,6 +105,12 @@ export class OrderService {
       );
     }
 
-    return await this.orderRepository.delete(id);
+    const deleteOrder = await this.orderRepository.delete(id);
+
+    if (!deleteOrder) {
+      throw new Error('Erro ao deletar pedido');
+    }
+
+    return { message: 'Pedido deletado com sucesso' };
   }
 }

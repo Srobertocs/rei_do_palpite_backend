@@ -23,17 +23,53 @@ export class PaymentMethodService {
     return PaymentMethod;
   }
 
-  async createPaymentMethod(data: CreatePaymentMethodDto) {
+  async createPaymentMethod(data: CreatePaymentMethodDto, userId: number) {
     const paymentExist = await this.paymentMethodRepository.searchPaymentMethod(
-      { name: data.name },
+      { type_method: data.type_method },
     );
 
     if (paymentExist) {
       throw new ConflictException(
-        'Já existe um método de pagamento com este nome',
+        'Já existe um método de pagamento com este tipo',
       );
     }
 
-    return await this.paymentMethodRepository.create(data);
+    return await this.paymentMethodRepository.create({
+      type_method: data.type_method,
+      description: data.description,
+      user: {
+        connect: { id: userId },
+      },
+    });
+  }
+
+  async getAll(userId: number) {
+    const paymentMethods = await this.paymentMethodRepository.findAll(userId);
+
+    if (paymentMethods.length === 0) {
+      throw new NotFoundException('Nenhum método de pagamento cadastrado');
+    }
+
+    return paymentMethods;
+  }
+
+  async delete(id: number, userId: number) {
+    const paymentMethodsExist =
+      await this.paymentMethodRepository.searchPaymentMethod({
+        id,
+        user_id: userId,
+      });
+
+    if (!paymentMethodsExist) {
+      throw new NotFoundException('Método de pagamento não encontrado');
+    }
+
+    const deletePaymentMethod = await this.paymentMethodRepository.delete(id);
+
+    if (!deletePaymentMethod) {
+      throw new Error('Erro ao deletar método de pagamento');
+    }
+
+    return { message: 'Método de pagamento deletado com sucesso' };
   }
 }

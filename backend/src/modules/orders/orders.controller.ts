@@ -23,11 +23,6 @@ import { CurrentUserDto } from '../../dtos/current-user.dto.js';
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  @Get()
-  async getAll() {
-    return await this.orderService.getAll();
-  }
-
   @Get('user/:userId')
   async getByUserId(@CurrentUser() user: CurrentUserDto) {
     return await this.orderService.getByUserId(user.id);

@@ -15,4 +15,16 @@ export class PaymentMethodRepository {
   create(data: Prisma.PaymentMethodCreateInput) {
     return this.prismaService.paymentMethod.create({ data });
   }
+
+  findAll(userId: number) {
+    return this.prismaService.paymentMethod.findMany({
+      where: { user_id: userId },
+    });
+  }
+
+  delete(id: number) {
+    return this.prismaService.paymentMethod.delete({
+      where: { id },
+    });
+  }
 }

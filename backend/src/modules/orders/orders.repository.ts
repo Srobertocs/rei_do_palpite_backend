@@ -6,10 +6,6 @@ import { Prisma } from '@prisma/client';
 export class OrderRepository {
   private readonly prismaService = PrismaService;
 
-  findAll() {
-    return this.prismaService.order.findMany();
-  }
-
   findOrder(id: number, userId: number) {
     return this.prismaService.order.findFirst({
       where: { id, user_id: userId },
