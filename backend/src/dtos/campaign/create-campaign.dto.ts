@@ -6,7 +6,8 @@ export const createCampaignSchema = z
     code: z
       .number()
       .min(1, { message: 'O código deve ser maior que 0' })
-      .int({ message: 'O código deve ser um número inteiro' }),
+      .int({ message: 'O código deve ser um número inteiro' })
+      .nonnegative({ message: 'O código não pode ser negativo' }),
 
     name: z
       .string()
@@ -26,10 +27,12 @@ export const createCampaignSchema = z
 
     fee_operational: z
       .number()
+      .min(1, { message: 'A taxa operacional deve ser maior que 0' })
       .nonnegative({ message: 'A taxa operacional não pode ser negativa' }),
 
     campaign_value: z
       .number()
+      .min(1, { message: 'O valor da campanha deve ser maior que 0' })
       .nonnegative({ message: 'O valor da campanha não pode ser negativo' }),
 
     is_public: z

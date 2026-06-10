@@ -23,7 +23,7 @@ import { CurrentUserDto } from '../../dtos/current-user.dto.js';
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  @Get('user/:userId')
+  @Get('/user')
   async getByUserId(@CurrentUser() user: CurrentUserDto) {
     return await this.orderService.getByUserId(user.id);
   }
@@ -37,27 +37,27 @@ export class OrderController {
   }
 
   @Post()
-  async create(
-    @Body() createOrderDto: CreateOrderDto,
+  async createOrder(
+    @Body() body: CreateOrderDto,
     @CurrentUser() user: CurrentUserDto,
   ) {
-    return await this.orderService.create(createOrderDto, user.id);
+    return await this.orderService.createOrder(body, user.id);
   }
 
   @Put(':id')
-  async update(
+  async updateOrder(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateOrderDto: UpdateOrderDto,
+    @Body() body: UpdateOrderDto,
     @CurrentUser() user: CurrentUserDto,
   ) {
-    return await this.orderService.update(user.id, id, updateOrderDto);
+    return await this.orderService.updateOrder(user.id, id, body);
   }
 
   @Delete(':id')
-  async delete(
+  async deleteOrder(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: CurrentUserDto,
   ) {
-    return await this.orderService.delete(id, user.id);
+    return await this.orderService.deleteOrder(id, user.id);
   }
 }

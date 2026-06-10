@@ -35,16 +35,6 @@ export class OrderRepository {
     });
   }
 
-  count() {
-    return this.prismaService.order.count();
-  }
-
-  countByUserId(userId: number) {
-    return this.prismaService.order.count({
-      where: { user_id: userId },
-    });
-  }
-
   findUserOrderByCampaignOption(userId: number, campaignOptionId: number) {
     return this.prismaService.order.findFirst({
       where: {

@@ -41,7 +41,7 @@ export class OrderService {
     return orders;
   }
 
-  async create(data: CreateOrderDto, userId: number) {
+  async createOrder(data: CreateOrderDto, userId: number) {
     await Promise.all([
       this.campaignOptionService.searchCampaignOption(data.campaign_option_id),
       this.paymentMethodService.searchPaymentMethod(data.payment_method_id),
@@ -73,7 +73,7 @@ export class OrderService {
     });
   }
 
-  async update(id: number, userId: number, data: UpdateOrderDto) {
+  async updateOrder(id: number, userId: number, data: UpdateOrderDto) {
     const order = await this.orderRepository.findOrder(id, userId);
 
     if (!order) {
@@ -96,7 +96,7 @@ export class OrderService {
     return { message: 'Pedido atualizado com sucesso' };
   }
 
-  async delete(id: number, userId: number) {
+  async deleteOrder(id: number, userId: number) {
     const order = await this.orderRepository.findOrder(id, userId);
 
     if (!order) {
