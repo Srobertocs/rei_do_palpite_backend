@@ -25,7 +25,7 @@ export class PaymentMethodService {
 
   async createPaymentMethod(data: CreatePaymentMethodDto, userId: number) {
     const paymentExist = await this.paymentMethodRepository.searchPaymentMethod(
-      { type_method: data.type_method },
+      { type_method: data.type_method, user_id: userId },
     );
 
     if (paymentExist) {
@@ -36,6 +36,7 @@ export class PaymentMethodService {
 
     return await this.paymentMethodRepository.create({
       type_method: data.type_method,
+      status: data.status,
       description: data.description,
       user: {
         connect: { id: userId },

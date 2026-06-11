@@ -55,7 +55,7 @@ export class OrderService {
 
     if (orderExists) {
       throw new ConflictException(
-        'Você já tem um pedido vinculado a esta campanha',
+        'Você já tem um pedido vinculado a esta opção de campanha',
       );
     }
 
@@ -74,9 +74,9 @@ export class OrderService {
   }
 
   async updateOrder(id: number, userId: number, data: UpdateOrderDto) {
-    const order = await this.orderRepository.findOrder(id, userId);
+    const orderExists = await this.orderRepository.findOrder(id, userId);
 
-    if (!order) {
+    if (!orderExists) {
       throw new NotFoundException(
         `Pedido com ID ${id} não encontrado ou não pertence ao usuário`,
       );
@@ -93,13 +93,13 @@ export class OrderService {
       throw new Error('Erro ao atualizar pedido');
     }
 
-    return { message: 'Pedido atualizado com sucesso' };
+    return updateOrder;
   }
 
   async deleteOrder(id: number, userId: number) {
-    const order = await this.orderRepository.findOrder(id, userId);
+    const orderExists = await this.orderRepository.findOrder(id, userId);
 
-    if (!order) {
+    if (!orderExists) {
       throw new NotFoundException(
         `Pedido com ID ${id} não encontrado ou não pertence ao usuário`,
       );

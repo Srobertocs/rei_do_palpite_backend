@@ -1,5 +1,8 @@
 import { z } from 'zod';
 import { createZodDto } from 'nestjs-zod';
+// import { extendZodWithOpenApi } from '@asteasolutions/zod-to-openapi';
+
+// extendZodWithOpenApi(z);
 
 export const createCampaignSchema = z
   .object({
@@ -18,11 +21,13 @@ export const createCampaignSchema = z
     dt_start: z
       .string()
       .date({ message: 'A data de início é obrigatória' })
+      .describe('Formato esperado: YYYY-MM-DD. Exemplo: 2026-06-15')
       .transform((val) => new Date(`${val}T00:00:00.000Z`)),
 
     dt_end: z
       .string()
       .date({ message: 'A data de encerramento é obrigatória' })
+      .describe('Formato esperado: YYYY-MM-DD. Exemplo: 2026-06-15')
       .transform((val) => new Date(`${val}T00:00:00.000Z`)),
 
     fee_operational: z
